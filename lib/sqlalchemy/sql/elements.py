@@ -5154,6 +5154,19 @@ class quoted_name(util.MemoizedSlots, str):
     def __reduce__(self):
         return quoted_name, (str(self), self.quote)
 
+    def __hash__(self) -> int:
+        return hash((str(self), self.quote))
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, quoted_name)
+            and str(self) == str(other)
+            and self.quote == other.quote
+        )
+
+    def __ne__(self, other: Any) -> bool:
+        return not self == other
+
     def _memoized_method_lower(self):
         if self.quote:
             return self
