@@ -5154,6 +5154,9 @@ class quoted_name(util.MemoizedSlots, str):
     def __reduce__(self):
         return quoted_name, (str(self), self.quote)
 
+    def __hash__(self) -> int:
+        return hash((str(self), self.quote))
+
     def _memoized_method_lower(self):
         if self.quote:
             return self

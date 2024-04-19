@@ -20,6 +20,7 @@ from sqlalchemy.testing import AssertsCompiledSQL
 from sqlalchemy.testing import eq_
 from sqlalchemy.testing import fixtures
 from sqlalchemy.testing import is_
+from sqlalchemy.testing import ne_
 from sqlalchemy.testing.util import picklers
 
 
@@ -1021,6 +1022,32 @@ class QuotedIdentTest(fixtures.TestBase):
             assert isinstance(q2, _anonymous_label)
             eq_(str(q1), str(q2))
             eq_(q1.quote, q2.quote)
+
+    def test_hash_quote():
+        q1 = quoted_name("x", True)
+        q2 = quoted_name("x", False)
+        q3 = quoted_name("x", None)
+        ne_(hash(q1), hash(q2))
+        ne_(hash(q1), hash(q3))
+        ne_(hash(q2), hash(q3))
+
+    def test_hash_quotetrue():
+        q1 = quoted_name("x", True)
+        q2 = quoted_name("x", True)
+        ne_(hash(q1), hash("x"))
+        eq_(hash(q1), hash(q2))
+
+    def test_hash_quotefalse():
+        q1 = quoted_name("x", False)
+        q2 = quoted_name("x", False)
+        ne_(hash(q1), hash("x"))
+        eq_(hash(q1), hash(q2))
+
+    def test_hash_quotenone():
+        q1 = quoted_name("x", None)
+        q2 = quoted_name("x", None)
+        ne_(hash(q1), hash("x"))
+        eq_(hash(q1), hash(q2))
 
     def _assert_quoted(self, value, quote):
         assert isinstance(value, quoted_name)
